@@ -9,3 +9,11 @@ export TEST_MARIADB_URI="${TEST_MYSQL_URI}";
 
 timeout 3m pnpm run jest integration/mysql -- --detectOpenHandles --maxConcurrency=1 || true;
 timeout 3m pnpm run jest integration/mariadb -- --detectOpenHandles --maxConcurrency=1 || true;
+
+# Client Tests
+
+cd ../client
+
+export TEST_MYSQL_ISOLATED_URI="${TEST_MYSQL_URI}";
+          
+pnpm run test -- --testPathIgnorePatterns src/__tests__/types/types.test.ts || true;
