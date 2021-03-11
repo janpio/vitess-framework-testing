@@ -16,4 +16,4 @@ cd ../client
 
 export TEST_MYSQL_ISOLATED_URI="${TEST_MYSQL_URI}";
           
-pnpm run test -- --testPathIgnorePatterns src/__tests__/types/types.test.ts || true;
+pnpm run test -- --testPathIgnorePatterns src/__tests__/types/types.test.ts -- --detectOpenHandles || true;
