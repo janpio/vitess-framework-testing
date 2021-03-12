@@ -60,8 +60,8 @@ jobs:
           - 33807:33807
         env:
           PORT: 33804
-          KEYSPACES: test
-          NUM_SHARDS: "1"
+          KEYSPACES: test,tests
+          NUM_SHARDS: "2"
           MYSQL_BIND_HOST: "0.0.0.0"
         options: --health-cmd="mysqladmin ping -h127.0.0.1 -P33807" --health-interval=5s --health-timeout=2s --health-retries=5
 
@@ -78,36 +78,6 @@ jobs:
       - id: build
         name: Build changed tests
         run: ./run.sh build_image "${{ matrix.framework }}"
-
-      - id: run-mysql57
-        name: Run changed tests against upstream MySQL 5.7
-        run: ./run.sh run_test "${{ matrix.framework }}"
-        env:
-          VT_USERNAME: root
-          VT_PASSWORD: root
-          VT_DATABASE: test
-          VT_HOST: 127.0.0.1
-          VT_PORT: 33576
-
-      - id: run-mysql80
-        name: Run changed tests against upstream MySQL 8.0
-        run: ./run.sh run_test "${{ matrix.framework }}"
-        env:
-          VT_USERNAME: root
-          VT_PASSWORD: root
-          VT_DATABASE: test
-          VT_HOST: 127.0.0.1
-          VT_PORT: 33578
-
-      - id: run-vttestserver57
-        name: Run changed tests against vttestserver:mysql57
-        run: ./run.sh run_test "${{ matrix.framework }}"
-        env:
-          VT_USERNAME: test
-          VT_PASSWORD: test
-          VT_DATABASE: test
-          VT_HOST: 127.0.0.1
-          VT_PORT: 33577
 
       - id: run-vttestserver80
         name: Run changed tests against vttestserver:mysql80
