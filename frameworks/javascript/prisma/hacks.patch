@@ -93,3 +93,26 @@ index 2a1d7a85..a21f66fe 100644
    const credentials = uriToCredentials(connectionString)
  
    return {
+diff --git a/src/packages/client/src/utils/setupMysql.ts b/src/packages/client/src/utils/setupMysql.ts
+index 55b99f0ce..d2b0b3da4 100644
+--- a/src/packages/client/src/utils/setupMysql.ts
++++ b/src/packages/client/src/utils/setupMysql.ts
+@@ -44,8 +44,15 @@ export async function tearDownMysql(connectionString: string) {
+     multipleStatements: true,
+   })
+
+-  await db.query(`
+-    DROP DATABASE IF EXISTS \`${credentials.database}\`;
+-  `)
++
++  await db.query("USE " + credentials.database);
++  const foreign_keys = await db.query({rowsAsArray: true, sql: "SELECT DISTINCT TABLE_NAME, CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_NAME IS NOT NULL"});
++  for(let row of foreign_keys) {
++    await db.query("ALTER TABLE `" + row[0] + "` DROP FOREIGN KEY `" + row[1] + "`");
++  }
++  const tables = await db.query({rowsAsArray: true, sql: "SHOW TABLES"});
++  for(let row of tables) {
++    await db.query("DROP TABLE `" + row[0] + "`");
++  }
+   await db.end()
+ }
